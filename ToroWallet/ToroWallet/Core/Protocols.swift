@@ -78,3 +78,13 @@ protocol ITransactionsAdapter {
     func transactionsSingle(from: TransactionRecord?, coin: PlatformCoin?, filter: TransactionTypeFilter, limit: Int) -> Single<[TransactionRecord]>
     func rawTransaction(hash: String) -> String?
 }
+
+protocol ISendBitcoinAdapter {
+    var balanceData: BalanceData { get }
+    func availableBalance(feeRate: Int, address: String?, pluginData: [UInt8: IBitcoinPluginData]) -> Decimal
+    func maximumSendAmount(pluginData: [UInt8: IBitcoinPluginData]) -> Decimal?
+    func minimumSendAmount(address: String?) -> Decimal
+    func validate(address: String, pluginData: [UInt8: IBitcoinPluginData]) throws
+    func fee(amount: Decimal, feeRate: Int, address: String?, pluginData: [UInt8: IBitcoinPluginData]) -> Decimal
+    func sendSingle(amount: Decimal, address: String, feeRate: Int, pluginData: [UInt8: IBitcoinPluginData], sortMode: TransactionDataSortMode, logger: Logger) -> Single<Void>
+}
