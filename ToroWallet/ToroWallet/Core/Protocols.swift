@@ -327,3 +327,19 @@ protocol ITermsManager {
     var termsAcceptedObservable: Observable<Bool> { get }
     func update(term: Term)
 }
+
+protocol IPresentDelegate: AnyObject {
+    func show(viewController: UIViewController)
+}
+
+protocol IWalletConnectSessionStorage {
+    func sessions(accountId: String, chainIds: [Int]) -> [WalletConnectSession]
+    func save(session: WalletConnectSession)
+    func deleteSession(peerId: String)
+    func deleteSessions(accountId: String)
+}
+
+protocol IDeepLinkManager {
+    func handle(url: URL) -> Bool
+    var newSchemeObservable: Observable<DeepLinkManager.DeepLink?> { get }
+}
