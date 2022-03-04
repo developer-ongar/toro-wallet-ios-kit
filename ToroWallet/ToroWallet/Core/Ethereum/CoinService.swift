@@ -34,3 +34,22 @@ extension CoinService {
     func monetaryValue(value: BigUInt) -> Decimal {
         coinValue(value: value).value
     }
+    
+    // Example: Cent, Satoshi, GWei, etc
+    func fractionalMonetaryValue(value: Decimal) -> BigUInt {
+        BigUInt(value.roundedString(decimal: platformCoin.decimals)) ?? 0
+    }
+
+    func amountData(value: Decimal) -> AmountData {
+        let primaryInfo: AmountInfo
+        var secondaryInfo: AmountInfo?
+
+        let coinValue = CoinValue(kind: .platformCoin(platformCoin: platformCoin), value: value)
+
+        if let rate = rate {
+            primaryInfo = .coinValue(coinValue: coinValue)
+            secondaryInfo = .currencyValue(currencyValue: CurrencyValue(currency: rate.currency, value: rate.value * value))
+        } else {
+            primaryInfo = .coinValue(coinValue: coinValue)
+        }
+
