@@ -18,3 +18,22 @@ class FiatService {
             toggleAvailableRelay.accept(price != nil)
         }
     }
+
+    private let coinAmountRelay = PublishRelay<Decimal>()
+    private(set) var coinAmount: Decimal = 0
+
+    private var currencyAmount: Decimal?
+
+    private let primaryInfoRelay = PublishRelay<PrimaryInfo>()
+    private(set) var primaryInfo: PrimaryInfo = .amount(amount: 0) {
+        didSet {
+            primaryInfoRelay.accept(primaryInfo)
+        }
+    }
+
+    private let secondaryAmountInfoRelay = PublishRelay<AmountInfo?>()
+    private(set) var secondaryAmountInfo: AmountInfo? {
+        didSet {
+            secondaryAmountInfoRelay.accept(secondaryAmountInfo)
+        }
+    }
