@@ -29,3 +29,8 @@ extension CoinService {
         let decimalValue = Decimal(bigUInt: value, decimals: platformCoin.decimals) ?? 0
         return CoinValue(kind: .platformCoin(platformCoin: platformCoin), value: decimalValue)
     }
+    
+    // Example: Dollar, Bitcoin, Ether, etc
+    func monetaryValue(value: BigUInt) -> Decimal {
+        coinValue(value: value).value
+    }
