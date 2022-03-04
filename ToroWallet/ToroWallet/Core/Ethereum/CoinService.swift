@@ -53,3 +53,12 @@ extension CoinService {
             primaryInfo = .coinValue(coinValue: coinValue)
         }
 
+        return AmountData(primary: primaryInfo, secondary: secondaryInfo)
+    }
+
+    func amountData(value: BigUInt) -> AmountData {
+        amountData(value: Decimal(bigUInt: value, decimals: platformCoin.decimals) ?? 0)
+    }
+
+}
+
