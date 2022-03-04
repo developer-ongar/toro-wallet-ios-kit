@@ -76,3 +76,13 @@ extension RestoreCustomTokenWorker {
         guard !missingCoinTypeIds.isEmpty else {
             return
         }
+
+        joinedCustomTokensSingle(coinTypes: missingCoinTypeIds.map { CoinType(id: $0) })
+                .subscribe(onSuccess: { [weak self] tokens in
+                    self?.coinManager.save(customTokens: tokens)
+                    self?.walletManager.preloadWallets()
+                })
+                .disposed(by: disposeBag)
+    }
+
+}
