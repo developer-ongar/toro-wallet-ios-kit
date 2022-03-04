@@ -42,3 +42,7 @@ protocol ILogRecordStorage {
     func logsCount() -> Int
     func removeFirstLogs(count: Int)
 }
+
+protocol IBaseAdapter {
+    var isMainNet: Bool { get }
+}
