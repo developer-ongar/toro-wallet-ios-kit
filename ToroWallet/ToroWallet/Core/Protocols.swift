@@ -30,3 +30,8 @@ protocol ILocalStorage: AnyObject {
     func defaultProvider(blockchain: SwapModule.Dex.Blockchain) -> SwapModule.Dex.Provider
     func setDefaultProvider(blockchain: SwapModule.Dex.Blockchain, provider: SwapModule.Dex.Provider)
 }
+
+protocol ILogRecordManager {
+    func logsGroupedBy(context: String) -> [(String, Any)]
+    func onBecomeActive()
+}
