@@ -37,3 +37,21 @@ class FiatService {
             secondaryAmountInfoRelay.accept(secondaryAmountInfo)
         }
     }
+
+    private var toggleAvailableRelay = BehaviorRelay<Bool>(value: false)
+
+    var currency: Currency {
+        currencyKit.baseCurrency
+    }
+
+    var coinAmountLocked = false
+
+    init(switchService: AmountTypeSwitchService, currencyKit: CurrencyKit.Kit, marketKit: MarketKit.Kit) {
+        self.switchService = switchService
+        self.currencyKit = currencyKit
+        self.marketKit = marketKit
+
+        subscribe(disposeBag, switchService.amountTypeObservable) { [weak self] in self?.sync(amountType: $0) }
+
+        sync()
+    }
