@@ -35,3 +35,10 @@ protocol ILogRecordManager {
     func logsGroupedBy(context: String) -> [(String, Any)]
     func onBecomeActive()
 }
+
+protocol ILogRecordStorage {
+    func logs(context: String) -> [LogRecord]
+    func save(logRecord: LogRecord)
+    func logsCount() -> Int
+    func removeFirstLogs(count: Int)
+}
