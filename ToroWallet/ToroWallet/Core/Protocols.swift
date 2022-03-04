@@ -88,3 +88,11 @@ protocol ISendBitcoinAdapter {
     func fee(amount: Decimal, feeRate: Int, address: String?, pluginData: [UInt8: IBitcoinPluginData]) -> Decimal
     func sendSingle(amount: Decimal, address: String, feeRate: Int, pluginData: [UInt8: IBitcoinPluginData], sortMode: TransactionDataSortMode, logger: Logger) -> Single<Void>
 }
+
+protocol ISendDashAdapter {
+    func availableBalance(address: String?) -> Decimal
+    func minimumSendAmount(address: String?) -> Decimal
+    func validate(address: String) throws
+    func fee(amount: Decimal, address: String?) -> Decimal
+    func sendSingle(amount: Decimal, address: String, sortMode: TransactionDataSortMode, logger: Logger) -> Single<Void>
+}
