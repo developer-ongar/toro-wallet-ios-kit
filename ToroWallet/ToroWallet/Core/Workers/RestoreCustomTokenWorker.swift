@@ -36,3 +36,21 @@ class RestoreCustomTokenWorker {
             return nil
         }
     }
+    
+    private func joinedCustomTokensSingle(coinTypes: [CoinType]) -> Single<[CustomToken]> {
+        let singles: [Single<CustomToken?>] = coinTypes.map { coinType in
+            guard let single = customTokenSingle(coinType: coinType) else {
+                return Single.just(nil)
+            }
+
+            return single
+                    .map { customToken -> CustomToken? in customToken}
+                    .catchErrorJustReturn(nil)
+        }
+
+        return Single.zip(singles) { customTokens in
+            customTokens.compactMap { $0 }
+        }
+    }
+
+}
