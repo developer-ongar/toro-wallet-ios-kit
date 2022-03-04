@@ -78,3 +78,17 @@ extension AmountTypeSwitchService {
     }
 
 }
+
+extension AmountTypeSwitchService {
+
+    enum AmountType: String {
+        case coin
+        case currency
+
+        static prefix func ! (lhs: Self) -> Self {
+            lhs == .coin ? currency : coin
+        }
+
+    }
+
+}
