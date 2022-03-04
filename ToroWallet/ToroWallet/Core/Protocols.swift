@@ -96,3 +96,208 @@ protocol ISendDashAdapter {
     func fee(amount: Decimal, address: String?) -> Decimal
     func sendSingle(amount: Decimal, address: String, sortMode: TransactionDataSortMode, logger: Logger) -> Single<Void>
 }
+
+protocol ISendEthereumAdapter {
+    var evmKit: EthereumKit.Kit { get }
+    var balanceData: BalanceData { get }
+    func transactionData(amount: BigUInt, address: EthereumKit.Address) -> TransactionData
+}
+
+protocol IErc20Adapter {
+    var pendingTransactions: [TransactionRecord] { get }
+    func allowanceSingle(spenderAddress: EthereumKit.Address, defaultBlockParameter: DefaultBlockParameter) -> Single<Decimal>
+}
+
+protocol ISendBinanceAdapter {
+    var availableBalance: Decimal { get }
+    var availableBinanceBalance: Decimal { get }
+    func validate(address: String) throws
+    var fee: Decimal { get }
+    func sendSingle(amount: Decimal, address: String, memo: String?) -> Single<Void>
+}
+
+protocol ISendZcashAdapter {
+    var availableBalance: Decimal { get }
+    func validate(address: String) throws -> ZcashAdapter.AddressType
+    var fee: Decimal { get }
+    func sendSingle(amount: Decimal, address: String, memo: String?) -> Single<Void>
+}
+
+protocol IWordsManager {
+    func generateWords(count: Int) throws -> [String]
+}
+
+protocol IAuthManager {
+    func login(withWords words: [String], syncMode: SyncMode) throws
+    func logout() throws
+}
+
+protocol IAccountManager {
+    var activeAccount: Account? { get }
+    func set(activeAccountId: String?)
+
+    var accounts: [Account] { get }
+    func account(id: String) -> Account?
+
+    var activeAccountObservable: Observable<Account?> { get }
+    var accountsObservable: Observable<[Account]> { get }
+    var accountUpdatedObservable: Observable<Account> { get }
+    var accountDeletedObservable: Observable<Account> { get }
+    var accountsLostObservable: Observable<Bool> { get }
+
+    func update(account: Account)
+    func save(account: Account)
+    func delete(account: Account)
+    func clear()
+    func handleLaunch()
+    func handleForeground()
+}
+
+protocol IBackupManager {
+    var allBackedUp: Bool { get }
+    var allBackedUpObservable: Observable<Bool> { get }
+    func setAccountBackedUp(id: String)
+}
+
+protocol IBlurManager {
+    func willResignActive()
+    func didBecomeActive()
+}
+
+protocol ISystemInfoManager {
+    var appVersion: AppVersion { get }
+    var passcodeSet: Bool { get }
+    var deviceModel: String { get }
+    var osVersion: String { get }
+}
+
+protocol IEnabledWalletStorage {
+    var enabledWallets: [EnabledWallet] { get }
+    func enabledWallets(accountId: String) -> [EnabledWallet]
+    func handle(newEnabledWallets: [EnabledWallet], deletedEnabledWallets: [EnabledWallet])
+    func clearEnabledWallets()
+}
+
+protocol IActiveAccountStorage: AnyObject {
+    var activeAccountId: String? { get set }
+}
+
+protocol IAppVersionStorage {
+    var appVersions: [AppVersion] { get }
+    func save(appVersions: [AppVersion])
+}
+
+protocol IAppVersionRecordStorage {
+    var appVersionRecords: [AppVersionRecord] { get }
+    func save(appVersionRecords: [AppVersionRecord])
+}
+
+protocol IBlockchainSettingsRecordStorage {
+    func blockchainSettings(coinTypeKey: String, settingKey: String) -> BlockchainSettingRecord?
+    func save(blockchainSetting: BlockchainSettingRecord)
+    func deleteAll(settingKey: String)
+}
+
+protocol IBlockchainSettingsStorage: AnyObject {
+    func initialSyncSetting(coinType: MarketKit.CoinType) -> InitialSyncSetting?
+    func save(initialSyncSetting: InitialSyncSetting)
+}
+
+protocol IRestoreSettingsStorage {
+    func restoreSettings(accountId: String, coinId: String) -> [RestoreSettingRecord]
+    func restoreSettings(accountId: String) -> [RestoreSettingRecord]
+    func save(restoreSettingRecords: [RestoreSettingRecord])
+    func deleteAllRestoreSettings(accountId: String)
+}
+
+protocol IKitCleaner {
+    func clear()
+}
+
+protocol IAccountRecordStorage {
+    var allAccountRecords: [AccountRecord] { get }
+    func save(accountRecord: AccountRecord)
+    func deleteAccountRecord(by id: String)
+    func deleteAllAccountRecords()
+}
+
+protocol IPingManager {
+    func serverAvailable(url: String, timeoutInterval: TimeInterval) -> Observable<TimeInterval>
+}
+
+protocol ITransactionRateSyncer {
+    func sync(currencyCode: String)
+    func cancelCurrentSync()
+}
+
+protocol IPasteboardManager {
+    var value: String? { get }
+    func set(value: String)
+}
+
+protocol IUrlManager {
+    func open(url: String, from controller: UIViewController?)
+}
+
+protocol ICurrentDateProvider {
+    var currentDate: Date { get }
+}
+
+protocol IAddressParser {
+    func parse(paymentAddress: String) -> AddressData
+}
+
+protocol IFeeRateProvider {
+    var feeRatePriorityList: [FeeRatePriority] { get }
+    var defaultFeeRatePriority: FeeRatePriority { get }
+    var recommendedFeeRate: Single<Int> { get }
+    func feeRate(priority: FeeRatePriority) -> Single<Int>
+}
+
+protocol ICustomRangedFeeRateProvider: IFeeRateProvider {
+    var customFeeRange: ClosedRange<Int> { get }
+}
+
+protocol IEncryptionManager {
+    func encrypt(data: Data) throws -> Data
+    func decrypt(data: Data) throws -> Data
+}
+
+protocol IUUIDProvider {
+    func generate() -> String
+}
+
+protocol IAppManager {
+    var didBecomeActiveObservable: Observable<()> { get }
+    var willEnterForegroundObservable: Observable<()> { get }
+}
+
+protocol IDebugLogger {
+    var logs: [String] { get }
+
+    func logFinishLaunching()
+    func logEnterBackground()
+    func logEnterForeground()
+    func logTerminate()
+
+    func add(log: String)
+    func clearLogs()
+}
+
+protocol IAppStatusManager {
+    var status: [(String, Any)] { get }
+}
+
+protocol IAppVersionManager {
+    func checkLatestVersion()
+    var newVersionObservable: Observable<AppVersion?> { get }
+}
+
+protocol IRateAppManager {
+    func onBalancePageAppear()
+    func onBalancePageDisappear()
+    func onLaunch()
+    func onBecomeActive()
+    func onResignActive()
+    func forceShow()
+}
