@@ -49,3 +49,22 @@ class EvmTransactionService {
         self.feeRateProvider = feeRateProvider
         self.gasLimitSurchargePercent = gasLimitSurchargePercent
     }
+
+    private func gasPriceSingle(gasPriceType: GasPriceType) -> Single<Int> {
+        var recommendedSingle: Single<Int> = feeRateProvider.feeRate(priority: .recommended)
+
+        switch gasPriceType {
+        case .recommended:
+            warningOfStuckRelay.accept(false)
+            return recommendedSingle
+        case .custom(let gasPrice):
+            if let recommendedGasPrice = recommendedGasPrice {
+                recommendedSingle = .just(recommendedGasPrice)
+            }
+
+            return recommendedSingle.map { [weak self] recommendedGasPrice in
+                self?.warningOfStuckRelay.accept(gasPrice < recommendedGasPrice)
+                return gasPrice
+            }
+        }
+    }
