@@ -55,3 +55,24 @@ class FiatService {
 
         sync()
     }
+
+    private func sync(coinPrice: CoinPrice?) {
+        if let coinPrice = coinPrice, !coinPrice.expired {
+            price = coinPrice.value
+
+            if coinAmountLocked {
+                syncCurrencyAmount()
+            } else {
+                syncCurrencyAmount()
+                syncCoinAmount()
+            }
+        } else {
+            price = nil
+        }
+
+        sync()
+    }
+
+    private func sync(amountType: AmountTypeSwitchService.AmountType) {
+        sync()
+    }
