@@ -55,3 +55,10 @@ protocol IAdapter: AnyObject {
     var statusInfo: [(String, Any)] { get }
     var debugInfo: String { get }
 }
+
+protocol IBalanceAdapter: IBaseAdapter {
+    var balanceState: AdapterState { get }
+    var balanceStateUpdatedObservable: Observable<AdapterState> { get }
+    var balanceData: BalanceData { get }
+    var balanceDataUpdatedObservable: Observable<BalanceData> { get }
+}
