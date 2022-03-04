@@ -31,3 +31,21 @@ class EvmTransactionService {
             gasPriceTypeRelay.accept(gasPriceType)
         }
     }
+
+    private var recommendedGasPrice: Int?
+    private let warningOfStuckRelay = PublishRelay<Bool>()
+
+    private let transactionStatusRelay = PublishRelay<DataStatus<Transaction>>()
+    private(set) var transactionStatus: DataStatus<Transaction> = .failed(GasDataError.noTransactionData) {
+        didSet {
+            transactionStatusRelay.accept(transactionStatus)
+        }
+    }
+
+    private var disposeBag = DisposeBag()
+
+    init(evmKit: Kit, feeRateProvider: ICustomRangedFeeRateProvider, gasLimitSurchargePercent: Int = 0, customFeeRange: ClosedRange<Int> = 1...400) {
+        self.evmKit = evmKit
+        self.feeRateProvider = feeRateProvider
+        self.gasLimitSurchargePercent = gasLimitSurchargePercent
+    }
