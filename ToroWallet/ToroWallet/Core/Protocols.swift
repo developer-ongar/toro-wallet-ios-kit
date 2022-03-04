@@ -8,3 +8,9 @@ import Alamofire
 import HsToolKit
 import MarketKit
 import BigInt
+
+typealias CoinCode = String
+
+protocol IRandomManager {
+    func getRandomIndexes(max: Int, count: Int) -> [Int]
+}
