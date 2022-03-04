@@ -190,3 +190,11 @@ extension FiatService {
 
 }
 
+extension FiatService {
+
+    enum PrimaryInfo {
+        case amountInfo(amountInfo: AmountInfo?)
+        case amount(amount: Decimal)
+    }
+
+}
