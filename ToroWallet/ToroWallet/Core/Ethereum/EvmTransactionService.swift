@@ -202,3 +202,10 @@ extension EvmTransactionService {
         case recommended
         case custom(gasPrice: Int)
     }
+
+    enum GasDataError: Error {
+        case noTransactionData
+        case insufficientBalance
+    }
+
+}
