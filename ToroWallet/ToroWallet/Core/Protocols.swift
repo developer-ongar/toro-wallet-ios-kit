@@ -301,3 +301,29 @@ protocol IRateAppManager {
     func onResignActive()
     func forceShow()
 }
+
+protocol ITransactionDataSortModeSettingManager {
+    var setting: TransactionDataSortMode { get }
+    func save(setting: TransactionDataSortMode)
+}
+
+protocol IGuidesManager {
+    func guideCategoriesSingle(url: URL) -> Single<[GuideCategory]>
+}
+
+protocol IFavoriteCoinRecordStorage {
+    var favoriteCoinRecords: [FavoriteCoinRecord] { get }
+    func save(favoriteCoinRecord: FavoriteCoinRecord)
+    func save(favoriteCoinRecords: [FavoriteCoinRecord])
+    func deleteFavoriteCoinRecord(coinUid: String)
+    func favoriteCoinRecordExists(coinUid: String) -> Bool
+
+    var favoriteCoinRecords_v_0_22: [FavoriteCoinRecord_v_0_22] { get }
+}
+
+protocol ITermsManager {
+    var terms: [Term] { get }
+    var termsAccepted: Bool { get }
+    var termsAcceptedObservable: Observable<Bool> { get }
+    func update(term: Term)
+}
