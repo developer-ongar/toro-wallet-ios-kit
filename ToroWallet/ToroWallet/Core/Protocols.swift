@@ -62,3 +62,7 @@ protocol IBalanceAdapter: IBaseAdapter {
     var balanceData: BalanceData { get }
     var balanceDataUpdatedObservable: Observable<BalanceData> { get }
 }
+
+protocol IDepositAdapter: IBaseAdapter {
+    var receiveAddress: String { get }
+}
