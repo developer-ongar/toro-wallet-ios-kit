@@ -17,3 +17,17 @@ protocol IEvmTransactionFeeService {
 
     func set(gasPriceType: EvmTransactionService.GasPriceType)
 }
+
+class EvmTransactionService {
+    private let evmKit: Kit
+    private let feeRateProvider: ICustomRangedFeeRateProvider
+    let gasLimitSurchargePercent: Int
+
+    private var transactionData: TransactionData?
+
+    private let gasPriceTypeRelay = PublishRelay<GasPriceType>()
+    private(set) var gasPriceType: GasPriceType = .recommended {
+        didSet {
+            gasPriceTypeRelay.accept(gasPriceType)
+        }
+    }
