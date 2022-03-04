@@ -97,3 +97,23 @@ class FiatService {
             }
         }
     }
+    
+    private func syncCoinAmount() {
+        if let currencyAmount = currencyAmount, let price = price {
+            coinAmount = price == 0 ? 0 : currencyAmount / price
+        } else {
+            coinAmount = 0
+        }
+
+        coinAmountRelay.accept(coinAmount)
+    }
+
+    private func syncCurrencyAmount() {
+        if let price = price {
+            currencyAmount = coinAmount * price
+        } else {
+            currencyAmount = nil
+        }
+    }
+
+}
