@@ -54,3 +54,25 @@ class RestoreCustomTokenWorker {
     }
 
 }
+
+extension RestoreCustomTokenWorker {
+
+    func run() throws {
+        let alreadyRun: Bool = localStorage.value(for: localStorageKey) ?? false
+
+        guard !alreadyRun else {
+            return
+        }
+
+        localStorage.set(value: true, for: localStorageKey)
+
+        let enabledWallets = storage.enabledWallets
+        let coinTypeIds = enabledWallets.map { $0.coinId }
+        let platformCoins = try coinManager.platformCoins(coinTypeIds: coinTypeIds)
+
+        let existingCoinTypeIds = platformCoins.map { $0.coinType.id }
+        let missingCoinTypeIds = coinTypeIds.filter { !existingCoinTypeIds.contains($0) }
+
+        guard !missingCoinTypeIds.isEmpty else {
+            return
+        }
