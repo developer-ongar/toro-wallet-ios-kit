@@ -24,3 +24,33 @@ class AmountTypeSwitchService {
             }
         }
     }
+
+    init(localStorage: StorageKit.ILocalStorage) {
+        amountType = localStorage.value(for: amountTypeKey).flatMap { AmountType(rawValue: $0) } ?? .coin
+        self.localStorage = localStorage
+    }
+
+    private func subscribeToObservables() {
+        disposeBag = DisposeBag()
+
+        Observable.combineLatest(toggleAvailableObservables)
+                .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+                .subscribe(onNext: { [weak self] array in
+                    self?.syncToggleAvailable(array: array)
+                })
+                .disposed(by: disposeBag)
+    }
+
+    private func syncToggleAvailable(array: [Bool]) {
+        toggleAvailable = array.allSatisfy { $0 }
+
+        if !toggleAvailable && amountType == .currency { // reset input type if it was set to currency
+            amountType = .coin
+        } else if toggleAvailable,
+                  let savedAmountType = localStorage.value(for: amountTypeKey).flatMap({ AmountType(rawValue: $0) }),
+                  savedAmountType == .currency && amountType == .coin {
+            amountType = .currency
+        }
+    }
+
+}
