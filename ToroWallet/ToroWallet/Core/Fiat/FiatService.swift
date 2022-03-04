@@ -76,3 +76,24 @@ class FiatService {
     private func sync(amountType: AmountTypeSwitchService.AmountType) {
         sync()
     }
+
+    private func sync() {
+        queue.async {
+            if let platformCoin = self.platformCoin {
+                let coinAmountInfo: AmountInfo = .coinValue(coinValue: CoinValue(kind: .platformCoin(platformCoin: platformCoin), value: self.coinAmount))
+                let currencyAmountInfo: AmountInfo? = self.currencyAmount.map { .currencyValue(currencyValue: CurrencyValue(currency: self.currency, value: $0)) }
+
+                switch self.switchService.amountType {
+                case .coin:
+                    self.primaryInfo = .amountInfo(amountInfo: coinAmountInfo)
+                    self.secondaryAmountInfo = currencyAmountInfo
+                case .currency:
+                    self.primaryInfo = .amountInfo(amountInfo: currencyAmountInfo)
+                    self.secondaryAmountInfo = coinAmountInfo
+                }
+            } else {
+                self.primaryInfo = .amount(amount: self.coinAmount)
+                self.secondaryAmountInfo = .currencyValue(currencyValue: .init(currency: self.currency, value: 0))
+            }
+        }
+    }
