@@ -74,3 +74,105 @@ extension MarketKit.CoinType {
         default: return []
         }
     }
+
+    var restoreSettingTypes: [RestoreSettingType] {
+        switch self {
+        case .zcash: return [.birthdayHeight]
+        default: return []
+        }
+    }
+
+    var isSupported: Bool {
+        switch self {
+        case .bitcoin, .litecoin, .bitcoinCash, .dash, .ethereum, .zcash, .binanceSmartChain, .erc20, .bep20, .bep2: return true
+        default: return false
+        }
+    }
+
+    var placeholderImageName: String {
+        blockchainType.map { "Coin Icon Placeholder - \($0)" } ?? "icon_placeholder_24"
+    }
+
+    var order: Int {
+        switch self {
+        case .erc20: return 1
+        case .bep20: return 2
+        case .bep2: return 3
+        case .solana: return 4
+        case .avalanche: return 5
+        case .fantom: return 6
+        case .arbitrumOne: return 7
+        case .polygonPos: return 8
+        case .huobiToken: return 9
+        case .harmonyShard0: return 10
+        case .xdai: return 11
+        case .moonriver: return 12
+        case .okexChain: return 13
+        case .sora: return 14
+        case .tomochain: return 15
+        case .iotex: return 16
+        default: return Int.max
+        }
+    }
+
+}
+
+extension MarketKit.Coin {
+
+    var isCustom: Bool {
+        uid.starts(with: CustomToken.uidPrefix)
+    }
+
+    var imageUrl: String {
+        let scale = Int(UIScreen.main.scale)
+        return "https://markets.nyc3.digitaloceanspaces.com/coin-icons/\(uid)@\(scale)x.png"
+    }
+
+}
+
+extension MarketKit.CoinCategory {
+
+    var imageUrl: String {
+        let scale = Int(UIScreen.main.scale)
+        return "https://markets.nyc3.digitaloceanspaces.com/category-icons/\(uid)@\(scale)x.png"
+    }
+
+}
+
+extension MarketKit.CoinInvestment.Fund {
+
+    var logoUrl: String {
+        let scale = Int(UIScreen.main.scale)
+        return "https://markets.nyc3.digitaloceanspaces.com/fund-icons/\(uid)@\(scale)x.png"
+    }
+
+}
+
+extension MarketKit.CoinTreasury {
+
+    var fundLogoUrl: String {
+        let scale = Int(UIScreen.main.scale)
+        return "https://markets.nyc3.digitaloceanspaces.com/treasury-icons/\(fundUid)@\(scale)x.png"
+    }
+
+}
+
+extension MarketKit.Auditor {
+
+    var logoUrl: String? {
+        let scale = Int(UIScreen.main.scale)
+        return "https://markets.nyc3.digitaloceanspaces.com/auditor-icons/\(name)@\(scale)x.png".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    }
+
+}
+
+extension Array where Element == FullCoin {
+
+    mutating func sort(filter: String, isEnabled: (Coin) -> Bool) {
+        sort { lhsFullCoin, rhsFullCoin in
+            let lhsEnabled = isEnabled(lhsFullCoin.coin)
+            let rhsEnabled = isEnabled(rhsFullCoin.coin)
+
+            if lhsEnabled != rhsEnabled {
+                return lhsEnabled
+            }
