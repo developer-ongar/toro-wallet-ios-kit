@@ -49,5 +49,58 @@ extension LocalStorage: ILocalStorage {
             storage.set(value: newValue?.rawValue, for: keySendInputType)
         }
     }
-
     
+    var mainShownOnce: Bool {
+        get { storage.value(for: mainShownOnceKey) ?? false }
+        set { storage.set(value: newValue, for: mainShownOnceKey) }
+    }
+
+    var jailbreakShownOnce: Bool {
+        get { storage.value(for: jailbreakShownOnceKey) ?? false }
+        set { storage.set(value: newValue, for: jailbreakShownOnceKey) }
+    }
+
+    var transactionDataSortMode: TransactionDataSortMode? {
+        get {
+            if let rawValue: String = storage.value(for: keyTransactionDataSortMode), let value = TransactionDataSortMode(rawValue: rawValue) {
+                return value
+            }
+            return nil
+        }
+        set {
+            storage.set(value: newValue?.rawValue, for: keyTransactionDataSortMode)
+        }
+    }
+
+    var lockTimeEnabled: Bool {
+        get { storage.value(for: keyLockTimeEnabled) ?? false }
+        set { storage.set(value: newValue, for: keyLockTimeEnabled) }
+    }
+
+    var appLaunchCount: Int {
+        get { storage.value(for: keyAppLaunchCount) ?? 0 }
+        set { storage.set(value: newValue, for: keyAppLaunchCount) }
+    }
+
+    var rateAppLastRequestDate: Date? {
+        get { storage.value(for: keyRateAppLastRequestDate) }
+        set { storage.set(value: newValue, for: keyRateAppLastRequestDate) }
+    }
+
+    var zcashAlwaysPendingRewind: Bool {
+        get { storage.value(for: keyZCashRewind) ?? false }
+        set { storage.set(value: newValue, for: keyZCashRewind) }
+    }
+
+    func defaultProvider(blockchain: SwapModule.Dex.Blockchain) -> SwapModule.Dex.Provider {
+        let key = [keyDefaultProvider, blockchain.rawValue, blockchain.isMainNet.description].joined(separator: "|")
+        let raw: String? = storage.value(for: key)
+        return (raw.flatMap { SwapModule.Dex.Provider(rawValue: $0) }) ?? blockchain.allowedProviders[0]
+    }
+
+    func setDefaultProvider(blockchain: SwapModule.Dex.Blockchain, provider: SwapModule.Dex.Provider) {
+        let key = [keyDefaultProvider, blockchain.rawValue, blockchain.isMainNet.description].joined(separator: "|")
+        storage.set(value: provider.rawValue, for: key)
+    }
+
+}
