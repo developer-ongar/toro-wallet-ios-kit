@@ -14,3 +14,18 @@ class CoinService {
     }
 
 }
+
+extension CoinService {
+
+    var rate: CurrencyValue? {
+        let baseCurrency = currencyKit.baseCurrency
+
+        return marketKit.coinPrice(coinUid: platformCoin.coin.uid, currencyCode: baseCurrency.code).map { coinPrice in
+            CurrencyValue(currency: baseCurrency, value: coinPrice.value)
+        }
+    }
+
+    func coinValue(value: BigUInt) -> CoinValue {
+        let decimalValue = Decimal(bigUInt: value, decimals: platformCoin.decimals) ?? 0
+        return CoinValue(kind: .platformCoin(platformCoin: platformCoin), value: decimalValue)
+    }
