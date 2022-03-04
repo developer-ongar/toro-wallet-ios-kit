@@ -54,3 +54,27 @@ class AmountTypeSwitchService {
     }
 
 }
+
+extension AmountTypeSwitchService {
+
+    func toggle() {
+        if toggleAvailable {
+            amountType = !amountType
+            localStorage.set(value: amountType.rawValue, for: amountTypeKey)
+        }
+    }
+
+    var amountTypeObservable: Observable<AmountType> {
+        amountTypeRelay.asObservable()
+    }
+
+    var toggleAvailableObservable: Observable<Bool> {
+        toggleAvailableRelay.asObservable()
+    }
+
+    func add(toggleAllowedObservable: Observable<Bool>) {
+        toggleAvailableObservables.append(toggleAllowedObservable)
+        subscribeToObservables()
+    }
+
+}
