@@ -201,3 +201,17 @@ extension Array where Element == FullCoin {
                     return lhsStartsWithName
                 }
             }
+              
+              let lhsMarketCapRank = lhsFullCoin.coin.marketCapRank ?? Int.max
+            let rhsMarketCapRank = rhsFullCoin.coin.marketCapRank ?? Int.max
+
+            if lhsMarketCapRank != rhsMarketCapRank {
+                return lhsMarketCapRank < rhsMarketCapRank
+            }
+
+            return lhsFullCoin.coin.name.lowercased() < rhsFullCoin.coin.name.lowercased()
+        }
+    }
+
+}
+
