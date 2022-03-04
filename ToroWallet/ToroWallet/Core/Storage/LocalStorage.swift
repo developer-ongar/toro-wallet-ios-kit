@@ -104,3 +104,19 @@ extension LocalStorage: ILocalStorage {
     }
 
 }
+
+extension LocalStorage: IChartTypeStorage {
+
+    var chartType: ChartType? {
+        get {
+            if let rawValue: Int = storage.value(for: keyChartType), let type = ChartType(rawValue: rawValue) {
+                return type
+            }
+            return nil
+        }
+        set {
+            storage.set(value: newValue?.rawValue, for: keyChartType)
+        }
+    }
+
+}
