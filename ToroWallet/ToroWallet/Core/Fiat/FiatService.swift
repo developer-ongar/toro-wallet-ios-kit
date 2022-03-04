@@ -117,3 +117,76 @@ class FiatService {
     }
 
 }
+
+extension FiatService {
+
+    var coinAmountObservable: Observable<Decimal> {
+        coinAmountRelay.asObservable()
+    }
+
+    var primaryInfoObservable: Observable<PrimaryInfo> {
+        primaryInfoRelay.asObservable()
+    }
+
+    var secondaryAmountInfoObservable: Observable<AmountInfo?> {
+        secondaryAmountInfoRelay.asObservable()
+    }
+
+    var toggleAvailableObservable: Observable<Bool> {
+        toggleAvailableRelay.asObservable()
+    }
+
+    func set(platformCoin: PlatformCoin?) {
+        self.platformCoin = platformCoin
+
+        coinPriceDisposeBag = DisposeBag()
+
+        if let platformCoin = platformCoin {
+            sync(coinPrice: marketKit.coinPrice(coinUid: platformCoin.coin.uid, currencyCode: currency.code))
+
+            if !platformCoin.coin.isCustom {
+                marketKit.coinPriceObservable(coinUid: platformCoin.coin.uid, currencyCode: currency.code)
+                        .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .utility))
+                        .subscribe(onNext: { [weak self] coinPrice in
+                            self?.sync(coinPrice: coinPrice)
+                        })
+                        .disposed(by: coinPriceDisposeBag)
+            }
+        } else {
+            price = nil
+            currencyAmount = nil
+            sync()
+        }
+    }
+
+    func set(amount: Decimal) {
+        switch switchService.amountType {
+        case .coin:
+            coinAmount = amount
+            coinAmountRelay.accept(coinAmount)
+            syncCurrencyAmount()
+        case .currency:
+            currencyAmount = amount
+            syncCoinAmount()
+        }
+
+        sync()
+    }
+
+    func set(coinAmount: Decimal, notify: Bool = false) {
+        guard self.coinAmount != coinAmount else {
+            return
+        }
+
+        self.coinAmount = coinAmount
+
+        if notify {
+            coinAmountRelay.accept(coinAmount)
+        }
+
+        syncCurrencyAmount()
+        sync()
+    }
+
+}
+
