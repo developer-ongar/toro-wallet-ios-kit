@@ -66,3 +66,15 @@ protocol IBalanceAdapter: IBaseAdapter {
 protocol IDepositAdapter: IBaseAdapter {
     var receiveAddress: String { get }
 }
+
+protocol ITransactionsAdapter {
+    var transactionState: AdapterState { get }
+    var transactionStateUpdatedObservable: Observable<Void> { get }
+    var lastBlockInfo: LastBlockInfo? { get }
+    var lastBlockUpdatedObservable: Observable<Void> { get }
+    var explorerTitle: String { get }
+    func explorerUrl(transactionHash: String) -> String?
+    func transactionsObservable(coin: PlatformCoin?, filter: TransactionTypeFilter) -> Observable<[TransactionRecord]>
+    func transactionsSingle(from: TransactionRecord?, coin: PlatformCoin?, filter: TransactionTypeFilter, limit: Int) -> Single<[TransactionRecord]>
+    func rawTransaction(hash: String) -> String?
+}
