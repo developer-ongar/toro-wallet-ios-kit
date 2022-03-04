@@ -20,3 +20,19 @@ class RestoreCustomTokenWorker {
         self.localStorage = localStorage
         self.networkManager = networkManager
     }
+    
+    private func customTokenSingle(coinType: CoinType) -> Single<CustomToken>? {
+        switch coinType {
+        case .erc20(let address):
+            let service = AddEvmTokenBlockchainService(blockchain: .ethereum, networkManager: networkManager)
+            return service.customTokenSingle(reference: address)
+        case .bep20(let address):
+            let service = AddEvmTokenBlockchainService(blockchain: .binanceSmartChain, networkManager: networkManager)
+            return service.customTokenSingle(reference: address)
+        case .bep2(let symbol):
+            let service = AddBep2TokenBlockchainService(networkManager: networkManager)
+            return service.customTokenSingle(reference: symbol)
+        default:
+            return nil
+        }
+    }
