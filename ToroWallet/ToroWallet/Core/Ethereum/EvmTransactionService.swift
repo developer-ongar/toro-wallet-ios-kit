@@ -197,3 +197,8 @@ extension EvmTransactionService {
             transactionData.value + gasData.fee
         }
     }
+
+    enum GasPriceType {
+        case recommended
+        case custom(gasPrice: Int)
+    }
