@@ -355,3 +355,15 @@ protocol IEnabledWalletCacheStorage {
     func save(enabledWalletCaches: [EnabledWalletCache])
     func deleteEnabledWalletCaches(accountId: String)
 }
+
+protocol ICustomTokenStorage {
+    func customTokens(platformType: PlatformType, filter: String) -> [CustomToken]
+    func customTokens(filter: String) -> [CustomToken]
+    func customTokens(coinTypeIds: [String]) -> [CustomToken]
+    func customToken(coinType: MarketKit.CoinType) -> CustomToken?
+    func save(customTokens: [CustomToken])
+}
+
+protocol IChartTypeStorage: AnyObject {
+    var chartType: ChartType? { get set }
+}
